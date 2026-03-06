@@ -1,56 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Language Champ</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #f5f5f5;
-      text-align: center;
-      padding: 20px;
-    }
+<title>Language Champ</title>
 
-    h1 {
-      color: #58cc02;
-    }
+<style>
+body{
+font-family:Arial;
+background:#f7f7f7;
+text-align:center;
+padding:20px;
+}
 
-    .card {
-      background: white;
-      padding: 20px;
-      margin: 20px auto;
-      width: 90%;
-      max-width: 400px;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
+h1{
+color:#58cc02;
+}
 
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      border: none;
-      border-radius: 10px;
-      background: #58cc02;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
+.card{
+background:white;
+padding:20px;
+margin:20px auto;
+width:90%;
+max-width:400px;
+border-radius:15px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
 
-    button:disabled {
-      background: grey;
-    }
+button{
+padding:10px 20px;
+margin:10px;
+border:none;
+border-radius:10px;
+background:#58cc02;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
 
-    input {
-      padding: 10px;
-      width: 80%;
-      margin: 10px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-    }
+button:disabled{
+background:gray;
+}
 
-    .locked {
-      background: #ccc;
-    }
-  </style>
+input{
+padding:10px;
+width:80%;
+margin:10px;
+border-radius:10px;
+border:1px solid #ccc;
+}
+</style>
+
 </head>
 
 <body>
@@ -58,160 +56,216 @@
 <h1>Language Champ</h1>
 
 <div class="card">
-  <p>XP: <span id="xp">0</span> ⭐</p>
-  <p>Hearts: <span id="hearts">3</span> ❤️</p>
+XP ⭐ <span id="xp">0</span><br>
+Hearts ❤️ <span id="hearts">3</span>
 </div>
 
-<div id="languageSelect" class="card">
-  <h2>Select Language</h2>
-  <button onclick="chooseLanguage('english')">English</button>
-  <button onclick="chooseLanguage('swahili')">Swahili</button>
+<div id="languageScreen" class="card">
+<h2>Choose Language</h2>
+<button onclick="chooseLanguage('swahili')">Swahili</button>
+<button onclick="chooseLanguage('english')">English</button>
 </div>
 
-<div id="levelSelect" class="card" style="display:none;">
-  <h2>Select Level</h2>
-  <div id="levels"></div>
+<div id="levelScreen" class="card" style="display:none;">
+<h2>Select Level</h2>
+<div id="levels"></div>
 </div>
 
-<div id="lessonCard" class="card" style="display:none;">
-  <h2 id="lessonTitle"></h2>
-  <p id="question"></p>
-  <input type="text" id="answerInput" placeholder="Type your answer">
-  <br>
-  <button onclick="submitAnswer()">Submit</button>
+<div id="lessonScreen" class="card" style="display:none;">
+<h2 id="lessonTitle"></h2>
+<p id="lessonContent"></p>
+<input id="answerInput" placeholder="Type answer">
+<br>
+<button onclick="submitAnswer()">Submit</button>
 </div>
 
 <script>
 
-let xp = localStorage.getItem("xp") ? parseInt(localStorage.getItem("xp")) : 0;
-let unlockedLevel = localStorage.getItem("unlockedLevel") ? parseInt(localStorage.getItem("unlockedLevel")) : 1;
-let hearts = 3;
+let xp = localStorage.getItem("xp") ? parseInt(localStorage.getItem("xp")) : 0
+let unlocked = localStorage.getItem("unlocked") ? parseInt(localStorage.getItem("unlocked")) : 1
+let hearts = 3
 
-document.getElementById("xp").innerText = xp;
+document.getElementById("xp").innerText = xp
+
+let language
+let level
+let step = 0
+let questionIndex = 0
 
 const lessons = {
-  english: {
-    1: [
-      {question: "Translate to English: Jambo", answer: "hello"},
-      {question: "Translate to English: Asante", answer: "thank you"},
-      {question: "Translate to English: Rafiki", answer: "friend"}
-    ],
-    2: [
-      {question: "Translate to English: Ndiyo", answer: "yes"},
-      {question: "Translate to English: Hapana", answer: "no"}
-    ]
-  },
-  swahili: {
-    1: [
-      {question: "Translate to Swahili: Hello", answer: "jambo"},
-      {question: "Translate to Swahili: Thank you", answer: "asante"},
-      {question: "Translate to Swahili: Friend", answer: "rafiki"}
-    ],
-    2: [
-      {question: "Translate to Swahili: Yes", answer: "ndiyo"},
-      {question: "Translate to Swahili: No", answer: "hapana"}
-    ]
-  }
-};
 
-let currentLanguage;
-let currentLevel;
-let questionIndex = 0;
+swahili:{
+1:{
+teach:[
+"Hello in Swahili is **Jambo**",
+"You say **Jambo** when greeting someone politely."
+],
+questions:[
+{q:"Translate to Swahili: Hello",a:"jambo"},
+{q:"Translate to Swahili: Friend",a:"rafiki"}
+]
+},
 
-function chooseLanguage(lang) {
-  currentLanguage = lang;
-  document.getElementById("languageSelect").style.display = "none";
-  document.getElementById("levelSelect").style.display = "block";
-  showLevels();
+2:{
+teach:[
+"Thank you in Swahili is **Asante**",
+"You say **Asante** when someone helps you."
+],
+questions:[
+{q:"Translate to Swahili: Thank you",a:"asante"},
+{q:"Translate to Swahili: Yes",a:"ndiyo"}
+]
 }
 
-function showLevels() {
-  const levelsDiv = document.getElementById("levels");
-  levelsDiv.innerHTML = "";
+},
 
-  for (let level in lessons[currentLanguage]) {
-    let btn = document.createElement("button");
-    btn.innerText = "Level " + level;
-
-    if (level > unlockedLevel) {
-      btn.disabled = true;
-      btn.classList.add("locked");
-    }
-
-    btn.onclick = () => startLesson(level);
-    levelsDiv.appendChild(btn);
-  }
+english:{
+1:{
+teach:[
+"In English **Hello** is a greeting.",
+"You say **Hello** when meeting someone."
+],
+questions:[
+{q:"Translate to English: Jambo",a:"hello"},
+{q:"Translate to English: Rafiki",a:"friend"}
+]
+}
 }
 
-function startLesson(level) {
-  currentLevel = level;
-  questionIndex = 0;
-  hearts = 3;
-  updateHearts();
-
-  document.getElementById("levelSelect").style.display = "none";
-  document.getElementById("lessonCard").style.display = "block";
-
-  loadQuestion();
 }
 
-function loadQuestion() {
-  let lesson = lessons[currentLanguage][currentLevel];
+function chooseLanguage(lang){
+language=lang
 
-  if (questionIndex >= lesson.length) {
-    completeLesson();
-    return;
-  }
+document.getElementById("languageScreen").style.display="none"
+document.getElementById("levelScreen").style.display="block"
 
-  document.getElementById("lessonTitle").innerText = 
-    currentLanguage.toUpperCase() + " - Level " + currentLevel;
-
-  document.getElementById("question").innerText =
-    lesson[questionIndex].question;
-
-  document.getElementById("answerInput").value = "";
+showLevels()
 }
 
-function submitAnswer() {
-  let userAnswer = document.getElementById("answerInput").value.toLowerCase();
-  let correctAnswer = lessons[currentLanguage][currentLevel][questionIndex].answer;
+function showLevels(){
 
-  if (userAnswer === correctAnswer) {
-    alert("Correct! 🎉");
-    questionIndex++;
-    loadQuestion();
-  } else {
-    hearts--;
-    updateHearts();
-    alert("Wrong! ❌");
+let div=document.getElementById("levels")
+div.innerHTML=""
 
-    if (hearts === 0) {
-      alert("Lesson Failed 💔 Try Again!");
-      document.getElementById("lessonCard").style.display = "none";
-      document.getElementById("levelSelect").style.display = "block";
-    }
-  }
+for(let l in lessons[language]){
+
+let btn=document.createElement("button")
+btn.innerText="Level "+l
+
+if(l>unlocked){
+btn.disabled=true
 }
 
-function completeLesson() {
-  xp += 50;
-  localStorage.setItem("xp", xp);
-  document.getElementById("xp").innerText = xp;
-
-  if (currentLevel == unlockedLevel) {
-    unlockedLevel++;
-    localStorage.setItem("unlockedLevel", unlockedLevel);
-  }
-
-  alert("🎉 Lesson Complete! +50 XP");
-
-  document.getElementById("lessonCard").style.display = "none";
-  document.getElementById("levelSelect").style.display = "block";
-  showLevels();
+btn.onclick=function(){
+startLesson(l)
 }
 
-function updateHearts() {
-  document.getElementById("hearts").innerText = hearts;
+div.appendChild(btn)
+}
+
+}
+
+function startLesson(l){
+
+level=l
+step=0
+questionIndex=0
+hearts=3
+updateHearts()
+
+document.getElementById("levelScreen").style.display="none"
+document.getElementById("lessonScreen").style.display="block"
+
+showTeach()
+
+}
+
+function showTeach(){
+
+let teach=lessons[language][level].teach
+
+if(step<teach.length){
+
+document.getElementById("lessonTitle").innerText="Lesson "+level
+document.getElementById("lessonContent").innerText=teach[step]
+document.getElementById("answerInput").style.display="none"
+
+}else{
+
+showQuestion()
+
+}
+
+step++
+
+}
+
+function showQuestion(){
+
+let q=lessons[language][level].questions
+
+if(questionIndex>=q.length){
+completeLesson()
+return
+}
+
+document.getElementById("lessonContent").innerText=q[questionIndex].q
+document.getElementById("answerInput").style.display="inline"
+document.getElementById("answerInput").value=""
+
+}
+
+function submitAnswer(){
+
+if(step<=lessons[language][level].teach.length){
+showTeach()
+return
+}
+
+let ans=document.getElementById("answerInput").value.toLowerCase()
+let correct=lessons[language][level].questions[questionIndex].a
+
+if(ans==correct){
+
+alert("Correct 🎉")
+questionIndex++
+showQuestion()
+
+}else{
+
+hearts--
+updateHearts()
+
+alert("Wrong ❌")
+
+if(hearts==0){
+alert("Lesson Failed 💔")
+location.reload()
+}
+
+}
+
+}
+
+function completeLesson(){
+
+xp+=50
+localStorage.setItem("xp",xp)
+
+if(level==unlocked){
+unlocked++
+localStorage.setItem("unlocked",unlocked)
+}
+
+alert("Lesson Complete +50 XP ⭐")
+
+location.reload()
+
+}
+
+function updateHearts(){
+document.getElementById("hearts").innerText=hearts
 }
 
 </script>
