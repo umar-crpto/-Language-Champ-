@@ -1,12 +1,14 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 <title>Language Champ</title>
 
 <style>
+
 body{
 font-family:Arial;
-background:#f7f7f7;
+background:#f5f5f5;
 text-align:center;
 padding:20px;
 }
@@ -20,7 +22,7 @@ background:white;
 padding:20px;
 margin:20px auto;
 width:90%;
-max-width:400px;
+max-width:420px;
 border-radius:15px;
 box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
@@ -47,8 +49,8 @@ margin:10px;
 border-radius:10px;
 border:1px solid #ccc;
 }
-</style>
 
+</style>
 </head>
 
 <body>
@@ -56,112 +58,126 @@ border:1px solid #ccc;
 <h1>Language Champ</h1>
 
 <div class="card">
+
 XP ⭐ <span id="xp">0</span><br>
-Hearts ❤️ <span id="hearts">3</span>
+Hearts ❤️ <span id="hearts">3</span><br>
+Streak 🔥 <span id="streak">0</span>
+
 </div>
 
 <div id="languageScreen" class="card">
+
 <h2>Choose Language</h2>
+
 <button onclick="chooseLanguage('swahili')">Swahili</button>
+
 <button onclick="chooseLanguage('english')">English</button>
+
 </div>
 
 <div id="levelScreen" class="card" style="display:none;">
-<h2>Select Level</h2>
+
+<h2>Levels</h2>
+
 <div id="levels"></div>
+
 </div>
 
 <div id="lessonScreen" class="card" style="display:none;">
+
 <h2 id="lessonTitle"></h2>
+
 <p id="lessonContent"></p>
+
 <input id="answerInput" placeholder="Type answer">
+
 <br>
-<button onclick="submitAnswer()">Submit</button>
+
+<button onclick="nextStep()">Continue</button>
+
 </div>
+
+<audio id="correctSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3"></audio>
+<audio id="wrongSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7f7c4b5a45.mp3"></audio>
+<audio id="winSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7e4d9d5a09.mp3"></audio>
 
 <script>
 
 let xp = localStorage.getItem("xp") ? parseInt(localStorage.getItem("xp")) : 0
 let unlocked = localStorage.getItem("unlocked") ? parseInt(localStorage.getItem("unlocked")) : 1
+let streak = localStorage.getItem("streak") ? parseInt(localStorage.getItem("streak")) : 0
+let lastDay = localStorage.getItem("lastDay")
+
 let hearts = 3
 
 document.getElementById("xp").innerText = xp
+document.getElementById("streak").innerText = streak
 
 let language
 let level
-let step = 0
-let questionIndex = 0
+let stepIndex = 0
 
 const lessons = {
 
 swahili:{
-1:{
-teach:[
-"Hello in Swahili is **Jambo**",
-"You say **Jambo** when greeting someone politely."
+1:[
+{teach:"Hello in Swahili is Jambo",question:"Translate Hello",answer:"jambo"},
+{teach:"Friend in Swahili is Rafiki",question:"Translate Friend",answer:"rafiki"},
+{teach:"Thank you in Swahili is Asante",question:"Translate Thank you",answer:"asante"}
 ],
-questions:[
-{q:"Translate to Swahili: Hello",a:"jambo"},
-{q:"Translate to Swahili: Friend",a:"rafiki"}
-]
-},
 
-2:{
-teach:[
-"Thank you in Swahili is **Asante**",
-"You say **Asante** when someone helps you."
-],
-questions:[
-{q:"Translate to Swahili: Thank you",a:"asante"},
-{q:"Translate to Swahili: Yes",a:"ndiyo"}
+2:[
+{teach:"Yes in Swahili is Ndiyo",question:"Translate Yes",answer:"ndiyo"},
+{teach:"No in Swahili is Hapana",question:"Translate No",answer:"hapana"}
 ]
-}
-
 },
 
 english:{
-1:{
-teach:[
-"In English **Hello** is a greeting.",
-"You say **Hello** when meeting someone."
-],
-questions:[
-{q:"Translate to English: Jambo",a:"hello"},
-{q:"Translate to English: Rafiki",a:"friend"}
+1:[
+{teach:"Hello is a greeting word",question:"Translate Jambo",answer:"hello"},
+{teach:"Friend means Rafiki",question:"Translate Rafiki",answer:"friend"}
 ]
-}
 }
 
 }
 
 function chooseLanguage(lang){
-language=lang
+
+language = lang
 
 document.getElementById("languageScreen").style.display="none"
 document.getElementById("levelScreen").style.display="block"
 
 showLevels()
+
 }
 
 function showLevels(){
 
-let div=document.getElementById("levels")
+let div = document.getElementById("levels")
+
 div.innerHTML=""
 
 for(let l in lessons[language]){
 
 let btn=document.createElement("button")
+
 btn.innerText="Level "+l
 
 if(l>unlocked){
+
 btn.disabled=true
+
 }
 
 btn.onclick=function(){
+
 startLesson(l)
+
 }
 
 div.appendChild(btn)
+
 }
 
 }
@@ -169,9 +185,11 @@ div.appendChild(btn)
 function startLesson(l){
 
 level=l
-step=0
-questionIndex=0
+
+stepIndex=0
+
 hearts=3
+
 updateHearts()
 
 document.getElementById("levelScreen").style.display="none"
@@ -183,89 +201,134 @@ showTeach()
 
 function showTeach(){
 
-let teach=lessons[language][level].teach
-
-if(step<teach.length){
+let step=lessons[language][level][stepIndex]
 
 document.getElementById("lessonTitle").innerText="Lesson "+level
-document.getElementById("lessonContent").innerText=teach[step]
+
+document.getElementById("lessonContent").innerText=step.teach
+
 document.getElementById("answerInput").style.display="none"
-
-}else{
-
-showQuestion()
-
-}
-
-step++
 
 }
 
 function showQuestion(){
 
-let q=lessons[language][level].questions
+let step=lessons[language][level][stepIndex]
 
-if(questionIndex>=q.length){
-completeLesson()
-return
-}
+document.getElementById("lessonContent").innerText=step.question
 
-document.getElementById("lessonContent").innerText=q[questionIndex].q
 document.getElementById("answerInput").style.display="inline"
+
 document.getElementById("answerInput").value=""
 
 }
 
-function submitAnswer(){
+let phase="teach"
 
-if(step<=lessons[language][level].teach.length){
-showTeach()
+function nextStep(){
+
+if(phase=="teach"){
+
+phase="question"
+
+showQuestion()
+
 return
+
 }
 
 let ans=document.getElementById("answerInput").value.toLowerCase()
-let correct=lessons[language][level].questions[questionIndex].a
+
+let correct=lessons[language][level][stepIndex].answer
 
 if(ans==correct){
 
-alert("Correct 🎉")
-questionIndex++
-showQuestion()
+document.getElementById("correctSound").play()
 
-}else{
+stepIndex++
+
+if(stepIndex>=lessons[language][level].length){
+
+finishLesson()
+
+return
+
+}
+
+phase="teach"
+
+showTeach()
+
+}
+
+else{
+
+document.getElementById("wrongSound").play()
 
 hearts--
+
 updateHearts()
 
-alert("Wrong ❌")
-
 if(hearts==0){
-alert("Lesson Failed 💔")
+
+alert("Lesson failed 💔")
+
 location.reload()
-}
 
 }
 
 }
 
-function completeLesson(){
+}
+
+function finishLesson(){
+
+document.getElementById("winSound").play()
 
 xp+=50
+
 localStorage.setItem("xp",xp)
 
+document.getElementById("xp").innerText=xp
+
 if(level==unlocked){
+
 unlocked++
+
 localStorage.setItem("unlocked",unlocked)
+
 }
 
-alert("Lesson Complete +50 XP ⭐")
+updateStreak()
+
+alert("Lesson Complete 🎉 +50 XP")
 
 location.reload()
 
 }
 
 function updateHearts(){
+
 document.getElementById("hearts").innerText=hearts
+
+}
+
+function updateStreak(){
+
+let today=new Date().toDateString()
+
+if(lastDay!=today){
+
+streak++
+
+localStorage.setItem("streak",streak)
+
+localStorage.setItem("lastDay",today)
+
+document.getElementById("streak").innerText=streak
+
+}
+
 }
 
 </script>
