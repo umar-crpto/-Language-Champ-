@@ -1,14 +1,14 @@
-
 <!DOCTYPE html>
 <html>
 <head>
+
 <title>Language Champ</title>
 
 <style>
 
 body{
 font-family:Arial;
-background:#f5f5f5;
+background:#f2f2f2;
 text-align:center;
 padding:20px;
 }
@@ -21,7 +21,6 @@ color:#58cc02;
 background:white;
 padding:20px;
 margin:20px auto;
-width:90%;
 max-width:420px;
 border-radius:15px;
 box-shadow:0 4px 10px rgba(0,0,0,0.1);
@@ -51,6 +50,7 @@ border:1px solid #ccc;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -67,19 +67,14 @@ Streak 🔥 <span id="streak">0</span>
 
 <div id="languageScreen" class="card">
 
-<h2>Choose Language</h2>
+<h2>Select Language</h2>
 
 <button onclick="chooseLanguage('swahili')">Swahili</button>
-
 <button onclick="chooseLanguage('english')">English</button>
-
-</div>
-
-<div id="levelScreen" class="card" style="display:none;">
-
-<h2>Levels</h2>
-
-<div id="levels"></div>
+<button onclick="chooseLanguage('french')">French</button>
+<button onclick="chooseLanguage('spanish')">Spanish</button>
+<button onclick="chooseLanguage('german')">German</button>
+<button onclick="chooseLanguage('luganda')">Luganda</button>
 
 </div>
 
@@ -97,14 +92,9 @@ Streak 🔥 <span id="streak">0</span>
 
 </div>
 
-<audio id="correctSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3"></audio>
-<audio id="wrongSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7f7c4b5a45.mp3"></audio>
-<audio id="winSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7e4d9d5a09.mp3"></audio>
-
 <script>
 
 let xp = localStorage.getItem("xp") ? parseInt(localStorage.getItem("xp")) : 0
-let unlocked = localStorage.getItem("unlocked") ? parseInt(localStorage.getItem("unlocked")) : 1
 let streak = localStorage.getItem("streak") ? parseInt(localStorage.getItem("streak")) : 0
 let lastDay = localStorage.getItem("lastDay")
 
@@ -114,28 +104,68 @@ document.getElementById("xp").innerText = xp
 document.getElementById("streak").innerText = streak
 
 let language
-let level
-let stepIndex = 0
+let phase="teach"
+let index=0
 
 const lessons = {
 
 swahili:{
-1:[
-{teach:"Hello in Swahili is Jambo",question:"Translate Hello",answer:"jambo"},
-{teach:"Friend in Swahili is Rafiki",question:"Translate Friend",answer:"rafiki"},
-{teach:"Thank you in Swahili is Asante",question:"Translate Thank you",answer:"asante"}
-],
-
-2:[
-{teach:"Yes in Swahili is Ndiyo",question:"Translate Yes",answer:"ndiyo"},
-{teach:"No in Swahili is Hapana",question:"Translate No",answer:"hapana"}
+teach:[
+["Hello","Jambo"],
+["Friend","Rafiki"],
+["Thank you","Asante"],
+["Yes","Ndiyo"],
+["No","Hapana"]
 ]
 },
 
 english:{
-1:[
-{teach:"Hello is a greeting word",question:"Translate Jambo",answer:"hello"},
-{teach:"Friend means Rafiki",question:"Translate Rafiki",answer:"friend"}
+teach:[
+["Jambo","Hello"],
+["Rafiki","Friend"],
+["Asante","Thank you"],
+["Ndiyo","Yes"],
+["Hapana","No"]
+]
+},
+
+french:{
+teach:[
+["Hello","Bonjour"],
+["Friend","Ami"],
+["Thank you","Merci"],
+["Yes","Oui"],
+["No","Non"]
+]
+},
+
+spanish:{
+teach:[
+["Hello","Hola"],
+["Friend","Amigo"],
+["Thank you","Gracias"],
+["Yes","Si"],
+["No","No"]
+]
+},
+
+german:{
+teach:[
+["Hello","Hallo"],
+["Friend","Freund"],
+["Thank you","Danke"],
+["Yes","Ja"],
+["No","Nein"]
+]
+},
+
+luganda:{
+teach:[
+["Hello","Oli otya"],
+["Friend","Mikwano"],
+["Thank you","Webale"],
+["Yes","Ye"],
+["No","Nedda"]
 ]
 }
 
@@ -143,57 +173,21 @@ english:{
 
 function chooseLanguage(lang){
 
-language = lang
+language=lang
 
 document.getElementById("languageScreen").style.display="none"
-document.getElementById("levelScreen").style.display="block"
-
-showLevels()
-
-}
-
-function showLevels(){
-
-let div = document.getElementById("levels")
-
-div.innerHTML=""
-
-for(let l in lessons[language]){
-
-let btn=document.createElement("button")
-
-btn.innerText="Level "+l
-
-if(l>unlocked){
-
-btn.disabled=true
-
-}
-
-btn.onclick=function(){
-
-startLesson(l)
-
-}
-
-div.appendChild(btn)
-
-}
-
-}
-
-function startLesson(l){
-
-level=l
-
-stepIndex=0
-
-hearts=3
-
-updateHearts()
-
-document.getElementById("levelScreen").style.display="none"
 document.getElementById("lessonScreen").style.display="block"
+
+startTeach()
+
+}
+
+function startTeach(){
+
+phase="teach"
+index=0
+hearts=3
+updateHearts()
 
 showTeach()
 
@@ -201,37 +195,49 @@ showTeach()
 
 function showTeach(){
 
-let step=lessons[language][level][stepIndex]
-
-document.getElementById("lessonTitle").innerText="Lesson "+level
-
-document.getElementById("lessonContent").innerText=step.teach
-
 document.getElementById("answerInput").style.display="none"
+
+let pair=lessons[language].teach[index]
+
+document.getElementById("lessonTitle").innerText="Learn"
+
+document.getElementById("lessonContent").innerText=
+pair[0]+" = "+pair[1]
 
 }
 
 function showQuestion(){
 
-let step=lessons[language][level][stepIndex]
-
-document.getElementById("lessonContent").innerText=step.question
-
 document.getElementById("answerInput").style.display="inline"
+
+let pair=lessons[language].teach[index]
+
+document.getElementById("lessonTitle").innerText="Question"
+
+document.getElementById("lessonContent").innerText=
+"Translate: "+pair[0]
 
 document.getElementById("answerInput").value=""
 
 }
 
-let phase="teach"
-
 function nextStep(){
 
 if(phase=="teach"){
 
-phase="question"
+index++
 
+if(index>=5){
+
+phase="quiz"
+index=0
 showQuestion()
+
+return
+
+}
+
+showTeach()
 
 return
 
@@ -239,15 +245,15 @@ return
 
 let ans=document.getElementById("answerInput").value.toLowerCase()
 
-let correct=lessons[language][level][stepIndex].answer
+let correct=lessons[language].teach[index][1].toLowerCase()
 
 if(ans==correct){
 
-document.getElementById("correctSound").play()
+alert("Correct 🎉")
 
-stepIndex++
+index++
 
-if(stepIndex>=lessons[language][level].length){
+if(index>=5){
 
 finishLesson()
 
@@ -255,23 +261,21 @@ return
 
 }
 
-phase="teach"
-
-showTeach()
+showQuestion()
 
 }
 
 else{
 
-document.getElementById("wrongSound").play()
-
 hearts--
 
 updateHearts()
 
+alert("Wrong ❌")
+
 if(hearts==0){
 
-alert("Lesson failed 💔")
+alert("Lesson Failed 💔")
 
 location.reload()
 
@@ -283,25 +287,15 @@ location.reload()
 
 function finishLesson(){
 
-document.getElementById("winSound").play()
-
 xp+=50
 
 localStorage.setItem("xp",xp)
 
 document.getElementById("xp").innerText=xp
 
-if(level==unlocked){
-
-unlocked++
-
-localStorage.setItem("unlocked",unlocked)
-
-}
-
 updateStreak()
 
-alert("Lesson Complete 🎉 +50 XP")
+alert("Lesson Complete +50 XP ⭐")
 
 location.reload()
 
@@ -334,4 +328,5 @@ document.getElementById("streak").innerText=streak
 </script>
 
 </body>
+
 </html>
