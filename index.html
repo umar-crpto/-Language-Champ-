@@ -1,346 +1,180 @@
-<!DOCTYPE html>
-<html>
-<head>
+Create a complete modern language learning web app called "Language Champ".
+
+The app should be a responsive web application built with HTML, CSS, and JavaScript (or React if possible). It should be mobile-friendly because most users will use phones.
+
+Design it with a clean colorful UI inspired by language learning apps like Duolingo.
+
+MAIN FEATURES
+
+1. User Accounts
+- Sign up
+- Login
+- Save user progress
+- User profile page
+- Profile picture
+- Username
+- Learning statistics
+
+2. Language Selection
+Users can choose which language they want to learn.
+
+Languages included:
+English
+Spanish
+French
+German
+Italian
+Portuguese
+Chinese
+Japanese
+Kiswahili
+
+3. Lesson System
+Lessons should be organized in levels:
+
+Beginner
+Intermediate
+Advanced
 
-<title>Language Champ</title>
+Each level contains units.
 
-<style>
+Each unit contains lessons.
 
-body{
-font-family:Arial;
-background:#f2f2f2;
-text-align:center;
-padding:20px;
-}
+Lesson types:
+- vocabulary matching
+- translation
+- multiple choice
+- fill in the blank
+- listening exercises
+- speaking exercises
 
-h1{
-color:#58cc02;
-}
+4. XP System
+Users earn XP points when completing lessons.
 
-.card{
-background:white;
-padding:20px;
-margin:20px auto;
-max-width:420px;
-border-radius:15px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
+Display:
+- XP counter
+- Level progress bar
+- Daily XP goal
 
-button{
-padding:10px 20px;
-margin:10px;
-border:none;
-border-radius:10px;
-background:#58cc02;
-color:white;
-font-weight:bold;
-cursor:pointer;
-}
+5. Streak System
+Track daily learning streak.
 
-button:disabled{
-background:gray;
-}
+Features:
+- streak counter
+- streak freeze
+- streak reminders
 
-input{
-padding:10px;
-width:80%;
-margin:10px;
-border-radius:10px;
-border:1px solid #ccc;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<h1>Language Champ</h1>
-
-<div class="card">
-
-XP ⭐ <span id="xp">0</span><br>
-Hearts ❤️ <span id="hearts">3</span><br>
-Streak 🔥 <span id="streak">0</span>
-
-</div>
-
-<div id="languageScreen" class="card">
-
-<h2>Select Language</h2>
-
-<button onclick="chooseLanguage('swahili')">Swahili</button>
-<button onclick="chooseLanguage('english')">English</button>
-<button onclick="chooseLanguage('french')">French</button>
-<button onclick="chooseLanguage('spanish')">Spanish</button>
-<button onclick="chooseLanguage('german')">German</button>
-<button onclick="chooseLanguage('luganda')">Luganda</button>
-
-</div>
-
-<div id="lessonScreen" class="card" style="display:none;">
-
-<h2 id="lessonTitle"></h2>
-
-<p id="lessonContent"></p>
-
-<input id="answerInput" placeholder="Type answer">
-
-<br>
-
-<button onclick="nextStep()">Continue</button>
-
-</div>
-
-<script>
+6. Gamification
+Add fun learning features:
 
-let xp = localStorage.getItem("xp") ? parseInt(localStorage.getItem("xp")) : 0
-let streak = localStorage.getItem("streak") ? parseInt(localStorage.getItem("streak")) : 0
-let lastDay = localStorage.getItem("lastDay")
+- hearts/lives system
+- coins or gems
+- leaderboards
+- badges and achievements
 
-let hearts = 3
-
-document.getElementById("xp").innerText = xp
-document.getElementById("streak").innerText = streak
-
-let language
-let phase="teach"
-let index=0
-
-const lessons = {
-
-swahili:{
-teach:[
-["Hello","Jambo"],
-["Friend","Rafiki"],
-["Thank you","Asante"],
-["Yes","Ndiyo"],
-["No","Hapana"]
-]
-},
+Achievements examples:
+First Lesson
+7 Day Streak
+100 XP Earned
+Language Explorer
 
-english:{
-teach:[
-["Jambo","Hello"],
-["Rafiki","Friend"],
-["Asante","Thank you"],
-["Ndiyo","Yes"],
-["Hapana","No"]
-]
-},
+7. Daily Challenges
+Add daily practice challenges.
 
-french:{
-teach:[
-["Hello","Bonjour"],
-["Friend","Ami"],
-["Thank you","Merci"],
-["Yes","Oui"],
-["No","Non"]
-]
-},
+Examples:
+- Complete 1 lesson
+- Learn 5 words
+- Translate 3 sentences
 
-spanish:{
-teach:[
-["Hello","Hola"],
-["Friend","Amigo"],
-["Thank you","Gracias"],
-["Yes","Si"],
-["No","No"]
-]
-},
+8. Vocabulary Trainer
+A section where users can review words they learned.
 
-german:{
-teach:[
-["Hello","Hallo"],
-["Friend","Freund"],
-["Thank you","Danke"],
-["Yes","Ja"],
-["No","Nein"]
-]
-},
+Include:
+- flashcards
+- pronunciation audio
+- spaced repetition
 
-luganda:{
-teach:[
-["Hello","Oli otya"],
-["Friend","Mikwano"],
-["Thank you","Webale"],
-["Yes","Ye"],
-["No","Nedda"]
-]
-}
+9. AI Language Assistant
+Add a chatbot tutor where users can:
+- ask grammar questions
+- practice conversation
+- translate sentences
+- get explanations
 
-}
+10. Speaking Practice
+Allow users to speak a sentence and compare pronunciation.
 
-function chooseLanguage(lang){
+11. Listening Practice
+Play audio and ask the user to type what they hear.
 
-language=lang
+12. Progress Dashboard
+Show learning statistics:
 
-document.getElementById("languageScreen").style.display="none"
-document.getElementById("lessonScreen").style.display="block"
+- total XP
+- streak days
+- lessons completed
+- accuracy percentage
 
-startTeach()
+13. Leaderboard
+Users can compare XP with other learners.
 
-}
+14. Notifications
+Remind users to practice daily.
 
-function startTeach(){
+15. Dark Mode
+Add light and dark theme.
 
-phase="teach"
-index=0
-hearts=3
-updateHearts()
+16. Mobile Friendly Design
+Use large buttons and simple navigation.
 
-showTeach()
+17. Friendly Mascot
+Add a cute learning mascot that encourages the user.
 
-}
+EXTRA FEATURES NOT IN DUOLINGO
 
-function showTeach(){
+Add new innovative features:
 
-document.getElementById("answerInput").style.display="none"
+1. AI Homework Helper
+Students can upload a question and get explanations.
 
-let pair=lessons[language].teach[index]
+2. Smart Study Planner
+AI creates a daily language learning schedule.
 
-document.getElementById("lessonTitle").innerText="Learn"
+3. Real Conversation Mode
+Users can simulate real conversations with AI.
 
-document.getElementById("lessonContent").innerText=
-pair[0]+" = "+pair[1]
+4. Cultural Learning Section
+Teach culture, idioms, and traditions of the language.
 
-}
+5. Language Games
+Mini games like:
+- word puzzles
+- speed translation
+- memory matching
 
-function showQuestion(){
+6. Offline Mode
+Allow lessons to be downloaded.
 
-document.getElementById("answerInput").style.display="inline"
+7. Global Chat
+Users can talk with learners around the world.
 
-let pair=lessons[language].teach[index]
+DESIGN
 
-document.getElementById("lessonTitle").innerText="Question"
+Use:
+- bright colors
+- rounded buttons
+- fun icons
+- progress bars
+- animated feedback
 
-document.getElementById("lessonContent").innerText=
-"Translate: "+pair[0]
+Make the app feel fun and motivating.
 
-document.getElementById("answerInput").value=""
+OUTPUT
 
-}
+Generate the complete project structure including:
 
-function nextStep(){
+index.html
+style.css
+script.js
 
-if(phase=="teach"){
-
-index++
-
-if(index>=5){
-
-phase="quiz"
-index=0
-showQuestion()
-
-return
-
-}
-
-showTeach()
-
-return
-
-}
-
-let ans=document.getElementById("answerInput").value.toLowerCase()
-
-let correct=lessons[language].teach[index][1].toLowerCase()
-
-if(ans==correct){
-
-alert("Correct 🎉")
-
-index++
-
-if(index>=5){
-
-finishLesson()
-
-return
-
-}
-
-showQuestion()
-
-}
-
-else{
-
-hearts--
-
-updateHearts()
-
-alert("Wrong ❌")
-
-if(hearts==0){
-
-alert("Lesson Failed 💔")
-
-location.reload()
-
-}
-
-}
-
-}
-
-function finishLesson(){
-
-xp+=50
-
-localStorage.setItem("xp",xp)
-
-document.getElementById("xp").innerText=xp
-
-updateStreak()
-
-alert("Lesson Complete +50 XP ⭐")
-
-location.reload()
-
-}
-
-function updateHearts(){
-
-document.getElementById("hearts").innerText=hearts
-
-}
-
-function updateStreak(){
-
-let today=new Date().toDateString()
-
-if(lastDay!=today){
-
-streak++
-
-localStorage.setItem("streak",streak)
-
-localStorage.setItem("lastDay",today)
-
-document.getElementById("streak").innerText=streak
-
-}
-
-}
-
-</script>
-
-</body>
-
-</html>
-
-<head>
-<title>Language Champ</title>
-
-<meta name="google-site-verification" content="abc123XYZ">
-
-</head>
-<head>
-<title>Language Champ</title>
-
-<meta name="google-site-verification" content="abc123XYZ">
-
-</head>
-google1234567890abcdef.html
+Organize code clearly so it can be uploaded to GitHub and deployed easily.
