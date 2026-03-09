@@ -1,17 +1,17 @@
+
 <!DOCTYPE html>
 <html>
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Language Champ</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 
 body{
-font-family: Arial;
+font-family:Arial;
 background:#f4f4f4;
 text-align:center;
 margin:0;
@@ -26,7 +26,7 @@ font-size:28px;
 
 .card{
 background:white;
-width:320px;
+width:330px;
 margin:40px auto;
 padding:25px;
 border-radius:12px;
@@ -41,6 +41,7 @@ padding:12px 25px;
 font-size:16px;
 border-radius:8px;
 cursor:pointer;
+margin-top:10px;
 }
 
 .hidden{
@@ -49,8 +50,22 @@ display:none;
 
 input{
 padding:10px;
-width:80%;
+width:85%;
 margin-top:10px;
+}
+
+.progress{
+height:12px;
+background:#ddd;
+border-radius:10px;
+margin-top:10px;
+}
+
+.progress-bar{
+height:12px;
+background:#58cc02;
+width:0%;
+border-radius:10px;
 }
 
 </style>
@@ -61,7 +76,31 @@ margin-top:10px;
 
 <header>🌍 Language Champ</header>
 
-<div class="card" id="menu">
+<!-- LOGIN -->
+
+<div class="card" id="login">
+
+<h2>Sign In</h2>
+
+<input id="email" placeholder="Email">
+<br>
+<input id="password" type="password" placeholder="Password">
+
+<br>
+
+<button onclick="signUp()">Create Account</button>
+<button onclick="signIn()">Sign In</button>
+
+<p>or</p>
+
+<button onclick="googleLogin()">Continue with Google</button>
+
+</div>
+
+
+<!-- LESSON MENU -->
+
+<div class="card hidden" id="menu">
 
 <h2>Select Language</h2>
 
@@ -79,6 +118,21 @@ margin-top:10px;
 </div>
 
 
+<!-- PROGRESS BAR -->
+
+<div class="card hidden" id="progressBox">
+
+<h3>Lesson Progress</h3>
+
+<div class="progress">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+
+</div>
+
+
+<!-- TEACH -->
+
 <div class="card hidden" id="teach">
 
 <h2>Learn This Word</h2>
@@ -91,6 +145,8 @@ margin-top:10px;
 
 </div>
 
+
+<!-- QUIZ -->
 
 <div class="card hidden" id="quiz">
 
@@ -109,30 +165,65 @@ margin-top:10px;
 </div>
 
 
+<!-- FINISH -->
+
 <div class="card hidden" id="finish">
 
 <h2>🎉 Lesson Complete</h2>
 
-<p>You finished this lesson.</p>
+<p id="xp"></p>
 
 </div>
 
 
+<audio id="correctSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9c8bfa.mp3"></audio>
+<audio id="wrongSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_8a6b2d68a1.mp3"></audio>
+
+
 <script>
+
+let xp = 0
 
 let lessonWords = [
 
-{word:"Hello", meaning:"Bonjour"},
-{word:"Thank you", meaning:"Merci"},
-{word:"Goodbye", meaning:"Au revoir"},
-{word:"Yes", meaning:"Oui"},
-{word:"No", meaning:"Non"}
+{word:"Hello",meaning:"Bonjour"},
+{word:"Thank you",meaning:"Merci"},
+{word:"Goodbye",meaning:"Au revoir"},
+{word:"Yes",meaning:"Oui"},
+{word:"No",meaning:"Non"}
 
 ]
 
 let teachIndex = 0
 let quizIndex = 0
 
+function signUp(){
+
+alert("Account created (demo version)")
+
+document.getElementById("login").classList.add("hidden")
+
+document.getElementById("menu").classList.remove("hidden")
+
+}
+
+function signIn(){
+
+document.getElementById("login").classList.add("hidden")
+
+document.getElementById("menu").classList.remove("hidden")
+
+}
+
+function googleLogin(){
+
+alert("Google login demo")
+
+document.getElementById("login").classList.add("hidden")
+
+document.getElementById("menu").classList.remove("hidden")
+
+}
 
 function startLesson(){
 
@@ -140,10 +231,11 @@ document.getElementById("menu").classList.add("hidden")
 
 document.getElementById("teach").classList.remove("hidden")
 
+document.getElementById("progressBox").classList.remove("hidden")
+
 showWord()
 
 }
-
 
 function showWord(){
 
@@ -151,8 +243,9 @@ document.getElementById("word").innerText = lessonWords[teachIndex].word
 
 document.getElementById("meaning").innerText = lessonWords[teachIndex].meaning
 
-}
+updateProgress()
 
+}
 
 function nextWord(){
 
@@ -170,7 +263,6 @@ startQuiz()
 
 }
 
-
 function startQuiz(){
 
 document.getElementById("teach").classList.add("hidden")
@@ -181,17 +273,15 @@ showQuestion()
 
 }
 
-
 function showQuestion(){
 
 document.getElementById("question").innerText = lessonWords[quizIndex].word
 
-document.getElementById("answer").value = ""
+document.getElementById("answer").value=""
 
-document.getElementById("result").innerText = ""
+updateProgress()
 
 }
-
 
 function checkAnswer(){
 
@@ -201,7 +291,11 @@ let correct = lessonWords[quizIndex].meaning.toLowerCase()
 
 if(user === correct){
 
-document.getElementById("result").innerText="✅ Correct"
+document.getElementById("result").innerText="✅ Correct!"
+
+document.getElementById("correctSound").play()
+
+xp += 10
 
 quizIndex++
 
@@ -219,16 +313,29 @@ finishLesson()
 
 document.getElementById("result").innerText="❌ Try again"
 
-}
+document.getElementById("wrongSound").play()
 
 }
 
+}
 
 function finishLesson(){
 
 document.getElementById("quiz").classList.add("hidden")
 
 document.getElementById("finish").classList.remove("hidden")
+
+document.getElementById("xp").innerText="You earned "+xp+" XP!"
+
+}
+
+function updateProgress(){
+
+let total = lessonWords.length * 2
+
+let progress = ((teachIndex + quizIndex)/total)*100
+
+document.getElementById("progressBar").style.width = progress + "%"
 
 }
 
