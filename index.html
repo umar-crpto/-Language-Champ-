@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 
@@ -21,13 +20,19 @@ header{
 background:#58cc02;
 color:white;
 padding:20px;
-font-size:28px;
+font-size:26px;
+}
+
+.level{
+background:#ffd900;
+padding:10px;
+font-weight:bold;
 }
 
 .card{
 background:white;
-width:330px;
-margin:40px auto;
+width:340px;
+margin:25px auto;
 padding:25px;
 border-radius:12px;
 box-shadow:0 0 10px rgba(0,0,0,0.1);
@@ -76,39 +81,48 @@ border-radius:10px;
 
 <header>🌍 Language Champ</header>
 
+<div class="level" id="levelText">Level 1</div>
+
+
 <!-- LOGIN -->
 
 <div class="card" id="login">
 
-<h2>Sign In</h2>
+<h2>Welcome</h2>
 
-<input id="email" placeholder="Email">
+<input placeholder="Email">
 <br>
-<input id="password" type="password" placeholder="Password">
+<input type="password" placeholder="Password">
 
 <br>
 
-<button onclick="signUp()">Create Account</button>
-<button onclick="signIn()">Sign In</button>
+<button onclick="enterApp()">Sign In</button>
+<button onclick="enterApp()">Create Account</button>
 
 <p>or</p>
 
-<button onclick="googleLogin()">Continue with Google</button>
+<button onclick="enterApp()">Continue with Google</button>
+
+<p>or</p>
+
+<button onclick="enterApp()">Continue as Guest</button>
 
 </div>
 
 
-<!-- LESSON MENU -->
+<!-- LANGUAGE -->
 
-<div class="card hidden" id="menu">
+<div class="card hidden" id="languageScreen">
 
 <h2>Select Language</h2>
 
-<select>
-<option>French</option>
-<option>Spanish</option>
-<option>German</option>
-<option>Kiswahili</option>
+<select id="language">
+
+<option value="french">French</option>
+<option value="german">German</option>
+<option value="spanish">Spanish</option>
+<option value="kiswahili">Kiswahili</option>
+
 </select>
 
 <br><br>
@@ -118,7 +132,7 @@ border-radius:10px;
 </div>
 
 
-<!-- PROGRESS BAR -->
+<!-- PROGRESS -->
 
 <div class="card hidden" id="progressBox">
 
@@ -173,6 +187,8 @@ border-radius:10px;
 
 <p id="xp"></p>
 
+<button onclick="restart()">Continue Learning</button>
+
 </div>
 
 
@@ -183,75 +199,94 @@ border-radius:10px;
 <script>
 
 let xp = 0
+let teachIndex = 0
+let quizIndex = 0
+let correctAnswers = 0
+let level = 1
+let currentLanguage = ""
 
-let lessonWords = [
 
+let lessons = {
+
+french:[
 {word:"Hello",meaning:"Bonjour"},
 {word:"Thank you",meaning:"Merci"},
 {word:"Goodbye",meaning:"Au revoir"},
 {word:"Yes",meaning:"Oui"},
 {word:"No",meaning:"Non"}
+],
 
+german:[
+{word:"Hello",meaning:"Hallo"},
+{word:"Thank you",meaning:"Danke"},
+{word:"Goodbye",meaning:"Tschüss"},
+{word:"Yes",meaning:"Ja"},
+{word:"No",meaning:"Nein"}
+],
+
+spanish:[
+{word:"Hello",meaning:"Hola"},
+{word:"Thank you",meaning:"Gracias"},
+{word:"Goodbye",meaning:"Adiós"},
+{word:"Yes",meaning:"Sí"},
+{word:"No",meaning:"No"}
+],
+
+kiswahili:[
+{word:"Hello",meaning:"Habari"},
+{word:"Thank you",meaning:"Asante"},
+{word:"Goodbye",meaning:"Kwaheri"},
+{word:"Yes",meaning:"Ndiyo"},
+{word:"No",meaning:"Hapana"}
 ]
 
-let teachIndex = 0
-let quizIndex = 0
+}
 
-function signUp(){
 
-alert("Account created (demo version)")
+function enterApp(){
 
 document.getElementById("login").classList.add("hidden")
-
-document.getElementById("menu").classList.remove("hidden")
+document.getElementById("languageScreen").classList.remove("hidden")
 
 }
 
-function signIn(){
-
-document.getElementById("login").classList.add("hidden")
-
-document.getElementById("menu").classList.remove("hidden")
-
-}
-
-function googleLogin(){
-
-alert("Google login demo")
-
-document.getElementById("login").classList.add("hidden")
-
-document.getElementById("menu").classList.remove("hidden")
-
-}
 
 function startLesson(){
 
-document.getElementById("menu").classList.add("hidden")
+currentLanguage = document.getElementById("language").value
+
+teachIndex = 0
+quizIndex = 0
+correctAnswers = 0
+xp = 0
+
+document.getElementById("languageScreen").classList.add("hidden")
 
 document.getElementById("teach").classList.remove("hidden")
-
 document.getElementById("progressBox").classList.remove("hidden")
 
 showWord()
 
 }
 
+
 function showWord(){
 
-document.getElementById("word").innerText = lessonWords[teachIndex].word
+let data = lessons[currentLanguage][teachIndex]
 
-document.getElementById("meaning").innerText = lessonWords[teachIndex].meaning
+document.getElementById("word").innerText = data.word
+document.getElementById("meaning").innerText = data.meaning
 
 updateProgress()
 
 }
 
+
 function nextWord(){
 
 teachIndex++
 
-if(teachIndex < lessonWords.length){
+if(teachIndex < 5){
 
 showWord()
 
@@ -263,45 +298,48 @@ startQuiz()
 
 }
 
+
 function startQuiz(){
 
 document.getElementById("teach").classList.add("hidden")
-
 document.getElementById("quiz").classList.remove("hidden")
 
 showQuestion()
 
 }
 
+
 function showQuestion(){
 
-document.getElementById("question").innerText = lessonWords[quizIndex].word
+let data = lessons[currentLanguage][quizIndex]
 
+document.getElementById("question").innerText = data.word
 document.getElementById("answer").value=""
+document.getElementById("result").innerText=""
 
 updateProgress()
 
 }
 
+
 function checkAnswer(){
 
 let user = document.getElementById("answer").value.toLowerCase()
-
-let correct = lessonWords[quizIndex].meaning.toLowerCase()
+let correct = lessons[currentLanguage][quizIndex].meaning.toLowerCase()
 
 if(user === correct){
 
+document.getElementById("correctSound").play()
 document.getElementById("result").innerText="✅ Correct!"
 
-document.getElementById("correctSound").play()
-
 xp += 10
+correctAnswers++
 
 quizIndex++
 
-if(quizIndex < lessonWords.length){
+if(quizIndex < 5){
 
-setTimeout(showQuestion,1000)
+setTimeout(showQuestion,800)
 
 }else{
 
@@ -311,28 +349,42 @@ finishLesson()
 
 }else{
 
+document.getElementById("wrongSound").play()
 document.getElementById("result").innerText="❌ Try again"
 
-document.getElementById("wrongSound").play()
-
 }
 
 }
+
 
 function finishLesson(){
 
 document.getElementById("quiz").classList.add("hidden")
-
 document.getElementById("finish").classList.remove("hidden")
 
 document.getElementById("xp").innerText="You earned "+xp+" XP!"
 
+if(correctAnswers === 5){
+
+level++
+document.getElementById("levelText").innerText="Level "+level
+
 }
+
+}
+
+
+function restart(){
+
+document.getElementById("finish").classList.add("hidden")
+document.getElementById("languageScreen").classList.remove("hidden")
+
+}
+
 
 function updateProgress(){
 
-let total = lessonWords.length * 2
-
+let total = 10
 let progress = ((teachIndex + quizIndex)/total)*100
 
 document.getElementById("progressBar").style.width = progress + "%"
@@ -342,5 +394,4 @@ document.getElementById("progressBar").style.width = progress + "%"
 </script>
 
 </body>
-
 </html>
