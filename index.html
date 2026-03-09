@@ -1,185 +1,150 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Language Champ</title>
-  
-  Create a complete modern language learning web app called "Language Champ".
 
-The app should be a responsive web application built with HTML, CSS, and JavaScript (or React if possible). It should be mobile-friendly because most users will use phones.
+<style>
 
-Design it with a clean colorful UI inspired by language learning apps like Duolingo.
+body{
+font-family: Arial, sans-serif;
+background:#f4f4f4;
+text-align:center;
+margin:0;
+padding:0;
+}
 
-MAIN FEATURES
+header{
+background:#58cc02;
+color:white;
+padding:20px;
+font-size:28px;
+font-weight:bold;
+}
 
-1. User Accounts
-- Sign up
-- Login
-- Save user progress
-- User profile page
-- Profile picture
-- Username
-- Learning statistics
+.container{
+margin-top:40px;
+}
 
-2. Language Selection
-Users can choose which language they want to learn.
+button{
+background:#58cc02;
+border:none;
+padding:12px 25px;
+font-size:18px;
+color:white;
+border-radius:8px;
+cursor:pointer;
+}
 
-Languages included:
-English
-Spanish
-French
-German
-Italian
-Portuguese
-Chinese
-Japanese
-Kiswahili
+button:hover{
+background:#46a302;
+}
 
-3. Lesson System
-Lessons should be organized in levels:
+.lesson-box{
+background:white;
+padding:25px;
+margin:20px auto;
+width:300px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
 
-Beginner
-Intermediate
-Advanced
+input{
+padding:10px;
+width:80%;
+font-size:16px;
+margin-top:10px;
+}
 
-Each level contains units.
+#result{
+font-weight:bold;
+margin-top:15px;
+font-size:18px;
+}
 
-Each unit contains lessons.
+.hidden{
+display:none;
+}
 
-Lesson types:
-- vocabulary matching
-- translation
-- multiple choice
-- fill in the blank
-- listening exercises
-- speaking exercises
+</style>
 
-4. XP System
-Users earn XP points when completing lessons.
+</head>
 
-Display:
-- XP counter
-- Level progress bar
-- Daily XP goal
+<body>
 
-5. Streak System
-Track daily learning streak.
+<header>
+🌍 Language Champ
+</header>
 
-Features:
-- streak counter
-- streak freeze
-- streak reminders
+<div class="container">
 
-6. Gamification
-Add fun learning features:
+<h2>Learn Languages the Fun Way</h2>
 
-- hearts/lives system
-- coins or gems
-- leaderboards
-- badges and achievements
+<p>Select a language and start learning</p>
 
-Achievements examples:
-First Lesson
-7 Day Streak
-100 XP Earned
-Language Explorer
+<select id="language">
+<option>French</option>
+<option>Spanish</option>
+<option>German</option>
+<option>Kiswahili</option>
+</select>
 
-7. Daily Challenges
-Add daily practice challenges.
+<br><br>
 
-Examples:
-- Complete 1 lesson
-- Learn 5 words
-- Translate 3 sentences
+<button onclick="startLesson()">Start Lesson</button>
 
-8. Vocabulary Trainer
-A section where users can review words they learned.
+</div>
 
-Include:
-- flashcards
-- pronunciation audio
-- spaced repetition
+<div id="lesson" class="lesson-box hidden">
 
-9. AI Language Assistant
-Add a chatbot tutor where users can:
-- ask grammar questions
-- practice conversation
-- translate sentences
-- get explanations
+<h3>Translate this word into French</h3>
 
-10. Speaking Practice
-Allow users to speak a sentence and compare pronunciation.
+<h2 id="question">Hello</h2>
 
-11. Listening Practice
-Play audio and ask the user to type what they hear.
+<input id="answer" placeholder="Type your answer">
 
-12. Progress Dashboard
-Show learning statistics:
+<br><br>
 
-- total XP
-- streak days
-- lessons completed
-- accuracy percentage
+<button onclick="checkAnswer()">Check Answer</button>
 
-13. Leaderboard
-Users can compare XP with other learners.
+<p id="result"></p>
 
-14. Notifications
-Remind users to practice daily.
+</div>
 
-15. Dark Mode
-Add light and dark theme.
+<script>
 
-16. Mobile Friendly Design
-Use large buttons and simple navigation.
+let correctAnswer = "bonjour"
 
-17. Friendly Mascot
-Add a cute learning mascot that encourages the user.
+function startLesson(){
 
-EXTRA FEATURES NOT IN DUOLINGO
+document.getElementById("lesson").classList.remove("hidden")
 
-Add new innovative features:
+}
 
-1. AI Homework Helper
-Students can upload a question and get explanations.
+function checkAnswer(){
 
-2. Smart Study Planner
-AI creates a daily language learning schedule.
+let userAnswer = document.getElementById("answer").value.toLowerCase()
 
-3. Real Conversation Mode
-Users can simulate real conversations with AI.
+if(userAnswer === correctAnswer){
 
-4. Cultural Learning Section
-Teach culture, idioms, and traditions of the language.
+document.getElementById("result").innerHTML="✅ Correct! Great job!"
 
-5. Language Games
-Mini games like:
-- word puzzles
-- speed translation
-- memory matching
+document.getElementById("result").style.color="green"
 
-6. Offline Mode
-Allow lessons to be downloaded.
+}else{
 
-7. Global Chat
-Users can talk with learners around the world.
+document.getElementById("result").innerHTML="❌ Incorrect. Try again."
 
-DESIGN
+document.getElementById("result").style.color="red"
 
-Use:
-- bright colors
-- rounded buttons
-- fun icons
-- progress bars
-- animated feedback
+}
 
-Make the app feel fun and motivating.
+}
 
-OUTPUT
+</script>
 
-Generate the complete project structure including:
-
-index.html
-style.css
-script.js
-
-Organize code clearly so it can be uploaded to GitHub and deployed easily.
+</body>
+</html>
