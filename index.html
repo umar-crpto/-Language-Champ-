@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
 
 <meta charset="UTF-8">
@@ -10,11 +11,10 @@
 <style>
 
 body{
-font-family: Arial, sans-serif;
+font-family: Arial;
 background:#f4f4f4;
 text-align:center;
 margin:0;
-padding:0;
 }
 
 header{
@@ -22,51 +22,35 @@ background:#58cc02;
 color:white;
 padding:20px;
 font-size:28px;
-font-weight:bold;
 }
 
-.container{
-margin-top:40px;
+.card{
+background:white;
+width:320px;
+margin:40px auto;
+padding:25px;
+border-radius:12px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
 button{
 background:#58cc02;
+color:white;
 border:none;
 padding:12px 25px;
-font-size:18px;
-color:white;
+font-size:16px;
 border-radius:8px;
 cursor:pointer;
 }
 
-button:hover{
-background:#46a302;
-}
-
-.lesson-box{
-background:white;
-padding:25px;
-margin:20px auto;
-width:300px;
-border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
+.hidden{
+display:none;
 }
 
 input{
 padding:10px;
 width:80%;
-font-size:16px;
 margin-top:10px;
-}
-
-#result{
-font-weight:bold;
-margin-top:15px;
-font-size:18px;
-}
-
-.hidden{
-display:none;
 }
 
 </style>
@@ -75,17 +59,13 @@ display:none;
 
 <body>
 
-<header>
-🌍 Language Champ
-</header>
+<header>🌍 Language Champ</header>
 
-<div class="container">
+<div class="card" id="menu">
 
-<h2>Learn Languages the Fun Way</h2>
+<h2>Select Language</h2>
 
-<p>Select a language and start learning</p>
-
-<select id="language">
+<select>
 <option>French</option>
 <option>Spanish</option>
 <option>German</option>
@@ -98,53 +78,162 @@ display:none;
 
 </div>
 
-<div id="lesson" class="lesson-box hidden">
 
-<h3>Translate this word into French</h3>
+<div class="card hidden" id="teach">
 
-<h2 id="question">Hello</h2>
+<h2>Learn This Word</h2>
 
-<input id="answer" placeholder="Type your answer">
+<h1 id="word"></h1>
+
+<p id="meaning"></p>
+
+<button onclick="nextWord()">Next Word</button>
+
+</div>
+
+
+<div class="card hidden" id="quiz">
+
+<h2>Translate This Word</h2>
+
+<h1 id="question"></h1>
+
+<input id="answer" placeholder="Type answer">
 
 <br><br>
 
-<button onclick="checkAnswer()">Check Answer</button>
+<button onclick="checkAnswer()">Check</button>
 
 <p id="result"></p>
 
 </div>
 
+
+<div class="card hidden" id="finish">
+
+<h2>🎉 Lesson Complete</h2>
+
+<p>You finished this lesson.</p>
+
+</div>
+
+
 <script>
 
-let correctAnswer = "bonjour"
+let lessonWords = [
+
+{word:"Hello", meaning:"Bonjour"},
+{word:"Thank you", meaning:"Merci"},
+{word:"Goodbye", meaning:"Au revoir"},
+{word:"Yes", meaning:"Oui"},
+{word:"No", meaning:"Non"}
+
+]
+
+let teachIndex = 0
+let quizIndex = 0
+
 
 function startLesson(){
 
-document.getElementById("lesson").classList.remove("hidden")
+document.getElementById("menu").classList.add("hidden")
+
+document.getElementById("teach").classList.remove("hidden")
+
+showWord()
 
 }
 
-function checkAnswer(){
 
-let userAnswer = document.getElementById("answer").value.toLowerCase()
+function showWord(){
 
-if(userAnswer === correctAnswer){
+document.getElementById("word").innerText = lessonWords[teachIndex].word
 
-document.getElementById("result").innerHTML="✅ Correct! Great job!"
+document.getElementById("meaning").innerText = lessonWords[teachIndex].meaning
 
-document.getElementById("result").style.color="green"
+}
+
+
+function nextWord(){
+
+teachIndex++
+
+if(teachIndex < lessonWords.length){
+
+showWord()
 
 }else{
 
-document.getElementById("result").innerHTML="❌ Incorrect. Try again."
-
-document.getElementById("result").style.color="red"
+startQuiz()
 
 }
+
+}
+
+
+function startQuiz(){
+
+document.getElementById("teach").classList.add("hidden")
+
+document.getElementById("quiz").classList.remove("hidden")
+
+showQuestion()
+
+}
+
+
+function showQuestion(){
+
+document.getElementById("question").innerText = lessonWords[quizIndex].word
+
+document.getElementById("answer").value = ""
+
+document.getElementById("result").innerText = ""
+
+}
+
+
+function checkAnswer(){
+
+let user = document.getElementById("answer").value.toLowerCase()
+
+let correct = lessonWords[quizIndex].meaning.toLowerCase()
+
+if(user === correct){
+
+document.getElementById("result").innerText="✅ Correct"
+
+quizIndex++
+
+if(quizIndex < lessonWords.length){
+
+setTimeout(showQuestion,1000)
+
+}else{
+
+finishLesson()
+
+}
+
+}else{
+
+document.getElementById("result").innerText="❌ Try again"
+
+}
+
+}
+
+
+function finishLesson(){
+
+document.getElementById("quiz").classList.add("hidden")
+
+document.getElementById("finish").classList.remove("hidden")
 
 }
 
 </script>
 
 </body>
+
 </html>
